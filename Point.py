@@ -22,6 +22,7 @@ class Point:
         self.x += int(other.x)
         self.y += int(other.y)
         self.z += int(other.z)
+        return self
     def __add__(self, other: Point) -> Point:
         new = copy(self)
         new += other
@@ -31,6 +32,7 @@ class Point:
         self.x -= int(other.x)
         self.y -= int(other.y)
         self.z -= int(other.z)
+        return self
     def __sub__(self, other: Point) -> Point:
         new = copy(self)
         new -= other

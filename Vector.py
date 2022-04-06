@@ -13,6 +13,7 @@ class Vector:
         self.x += other.x
         self.y += other.y
         self.z += other.z
+        return self
     def __add__(self, other: Vector) -> Vector:
         new = copy(self)
         new += other
@@ -22,6 +23,7 @@ class Vector:
         self.x *= scalar
         self.y *= scalar
         self.z *= scalar
+        return self
     def __mul__(self, scalar: float) -> Vector:
         new = copy(self)
         new *= scalar
@@ -31,6 +33,7 @@ class Vector:
         self.x /= scalar
         self.y /= scalar
         self.z /= scalar
+        return self
     def __truediv__(self, scalar: float) -> Vector:
         new = copy(self)
         new /= scalar
