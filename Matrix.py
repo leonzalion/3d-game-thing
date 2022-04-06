@@ -1,6 +1,6 @@
 from math import sin, cos
 
-import Polygon
+from Polygon import Polygon
 
 class Matrix:
     @staticmethod
