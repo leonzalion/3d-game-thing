@@ -156,7 +156,7 @@ def main():
             shiftIsPressed, \
             spaceIsPressed
 
-        # Get the key symbol (XK_Left, XK_Up, etc.) of the KeyPressed event
+        # Get the key symbol ("left", "up", etc.) of the KeyPress event
         keySymbol = event.keysym.lower()
         # Handle event depending on which key was pressed
         #
@@ -208,7 +208,7 @@ def main():
         # fortunately. (The original code has code that checks and ignores
         # these events.)
         #
-        # Get the key symbol (XK_Left, XK_Up, etc.) of the KeyPressed event
+        # Get the key symbol ("left", "up", etc.) of the KeyPress event
         keySymbol = event.keysym.lower()
         # Handle event depending on which key was released
         #
@@ -364,7 +364,7 @@ def main():
                     xPoints[j][0] = transformedPolygons[i].vertices[j].x * windowWidth / (windowWidth + 2 * transformedPolygons[i].vertices[j].z)
                     xPoints[j][1] = transformedPolygons[i].vertices[j].y * windowHeight / (windowHeight + 2 * transformedPolygons[i].vertices[j].z)
 
-                # Translate from game coordinates to screen coordinates (for XFillPolygon)
+                # Translate from game coordinates to screen coordinates
                 xPoints[j][0] = xPoints[j][0] + windowWidth / 2
                 xPoints[j][1] = xPoints[j][1] + windowHeight / 2
 
