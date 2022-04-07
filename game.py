@@ -1,5 +1,5 @@
 import tkinter as tk
-from typing import List, Union
+from typing import TYPE_CHECKING, List, Union
 
 from Matrix import Matrix
 from Point import Point
@@ -100,12 +100,19 @@ def main() -> None:
 
     # Handle events
 
+    # Python type annotations
+    if TYPE_CHECKING:
+        CanvasEvent = tk.Event[tk.Canvas]
+        MiscEvent = tk.Event[tk.Misc]
+    else:
+        CanvasEvent = MiscEvent = tk.Event
+
     # Left click to "drag" the camera around
-    def on_drag_down(xMotionEvent: tk.Event[tk.Canvas]) -> None:
+    def on_drag_down(xMotionEvent: CanvasEvent) -> None:
         global mouseX, mouseY
         mouseX = xMotionEvent.x
         mouseY = xMotionEvent.y
-    def on_drag_move(xMotionEvent: tk.Event[tk.Canvas]) -> None:
+    def on_drag_move(xMotionEvent: CanvasEvent) -> None:
         global mouseX, mouseY
         nonlocal dx, dy
         dx -= xMotionEvent.x - mouseX  # negative
@@ -116,11 +123,11 @@ def main() -> None:
     canvas.bind("<B1-Motion>", on_drag_move)
 
     # Right click to pan around
-    def on_pan_down(xMotionEvent: tk.Event[tk.Canvas]) -> None:
+    def on_pan_down(xMotionEvent: CanvasEvent) -> None:
         global mouseX, mouseY
         mouseX = xMotionEvent.x
         mouseY = xMotionEvent.y
-    def on_pan_move(xMotionEvent: tk.Event[tk.Canvas]) -> None:
+    def on_pan_move(xMotionEvent: CanvasEvent) -> None:
         global mouseX, mouseY
         nonlocal dx, dy
         dx += xMotionEvent.x - mouseX
@@ -130,7 +137,7 @@ def main() -> None:
     canvas.bind("<ButtonPress-3>", on_pan_down)
     canvas.bind("<B3-Motion>", on_pan_move)
 
-    def on_resize(xConfEvent: tk.Event[tk.Misc]) -> None:
+    def on_resize(xConfEvent: MiscEvent) -> None:
         global windowWidth, windowHeight
         # If window is resized, update local window size variables
         if xConfEvent.width != windowWidth:
@@ -139,7 +146,7 @@ def main() -> None:
             windowHeight = xConfEvent.height
     root.bind("<Configure>", on_resize)
 
-    def on_key_press(event: tk.Event[tk.Misc]) -> None:
+    def on_key_press(event: MiscEvent) -> None:
         nonlocal \
             leftArrowKeyIsPressed, \
             rightArrowKeyIsPressed, \
@@ -188,7 +195,7 @@ def main() -> None:
             root.destroy()
     root.bind("<KeyPress>", on_key_press)
 
-    def on_key_release(event: tk.Event[tk.Misc]) -> None:
+    def on_key_release(event: MiscEvent) -> None:
         nonlocal \
             leftArrowKeyIsPressed, \
             rightArrowKeyIsPressed, \
