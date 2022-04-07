@@ -1,4 +1,15 @@
 <!DOCTYPE html>
 <html>
-	<script type='module' src='game.ts'></script>
+	<head>
+		<style>
+			body {
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id='canvas'></canvas>
+		<button id='pointerLockButton' style='position: absolute; right: 0; bottom: 0;' onclick='lockCursor()'>Lock Cursor</button>
+		<script type="module" src="game.ts"></script>
+	</body>
 </html>

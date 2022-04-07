@@ -11,12 +11,12 @@ export class Matrix {
 		angle: number
 	): Point | Vector | Polygon {
 		if (p instanceof Polygon) {
-			const newVertices = (p as Polygon).vertices.map((vertex) =>
-				Matrix.rotateY(vertex, angle)
+			const newVertices = p.vertices.map((vertex) =>
+				Matrix.rotateX(vertex, angle)
 			);
 			return new Polygon(newVertices);
 		} else {
-			p = p as Point | Vector;
+			// eslint-disable-next-line prefer-destructuring
 			const x = p.x;
 			const y = p.y * Math.cos(angle) - p.z * Math.sin(angle);
 			const z = p.y * Math.sin(angle) + p.z * Math.cos(angle);
@@ -37,13 +37,13 @@ export class Matrix {
 		angle: number
 	): Point | Vector | Polygon {
 		if (p instanceof Polygon) {
-			const newVertices = (p as Polygon).vertices.map((vertex) =>
+			const newVertices = p.vertices.map((vertex) =>
 				Matrix.rotateY(vertex, angle)
 			);
 			return new Polygon(newVertices);
 		} else {
-			p = p as Point | Vector;
 			const x = p.x * Math.cos(angle) + p.z * Math.sin(angle);
+			// eslint-disable-next-line prefer-destructuring
 			const y = p.y;
 			const z = -p.x * Math.sin(angle) + p.z * Math.cos(angle);
 

@@ -1,4 +1,3 @@
-
 export class Vector {
 	x = 0;
 	y = 0;
@@ -14,31 +13,25 @@ export class Vector {
 
 	add({ x, y, z }: Vector) {
 		const v = new Vector(this.x, this.y, this.z);
-
 		v.x += x;
 		v.y += y;
 		v.z += z;
-
 		return v;
 	}
 
 	multiply(scalar: number) {
 		const v = new Vector(this.x, this.y, this.z);
-
 		v.x *= scalar;
 		v.y *= scalar;
 		v.z *= scalar;
-
 		return v;
 	}
 
 	divide(scalar: number) {
 		const v = new Vector(this.x, this.y, this.z);
-
 		v.x /= scalar;
 		v.y /= scalar;
 		v.z /= scalar;
-
 		return v;
 	}
 }

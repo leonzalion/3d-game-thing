@@ -1,6 +1,6 @@
 # TypeScript Port of AvanRocks/3d-game-thing
 
-Run ``ts-node game.ts`` to try it out :)
+Run `ts-node game.ts` to try it out :)
 
 ## Original Code
 

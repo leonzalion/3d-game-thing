@@ -15,9 +15,6 @@ const FPS = 100;
 const MOUSE_SENS_X = 1000;
 const MOUSE_SENS_Y = 1500;
 
-// border margin for warping the pointer
-const marginSize = 1;
-
 const polygons = [
 	new Polygon([
 		new Point(100, 100, 1000),
@@ -29,9 +26,6 @@ const polygons = [
 
 let angleX = 0;
 let angleY = 0;
-
-let mouseX = -1;
-let mouseY = -1;
 
 let windowWidth = window.innerWidth;
 let windowHeight = window.innerHeight;
@@ -49,8 +43,24 @@ function isInView(p: Point | Polygon) {
 	}
 }
 
-const canvas = document.createElement('canvas');
-document.body.append(canvas);
+const canvas = document.querySelector<HTMLCanvasElement>('#canvas');
+(window as any).lockCursor = () => {
+	canvas.requestPointerLock();
+};
+
+document.addEventListener('pointerlockchange', () => {
+	console.log('wat')
+	isCursorLocked = document.pointerLockElement === canvas;
+	if (isCursorLocked) {
+		document.querySelector<HTMLButtonElement>(
+			'#pointerLockButton'
+		).style.display = 'none';
+	} else {
+		document.querySelector<HTMLButtonElement>(
+			'#pointerLockButton'
+		).style.display = 'block';
+	}
+});
 
 function updateWindowWidth() {
 	windowWidth = window.innerWidth;
@@ -89,6 +99,7 @@ let downArrowKeyIsPressed = false;
 let shiftIsPressed = false;
 let spaceIsPressed = false;
 let isMouseDown = false;
+let isCursorLocked = false;
 let dx = 0;
 let dy = 0; // change in mouse position
 
@@ -101,26 +112,10 @@ window.addEventListener('mouseup', () => {
 });
 
 window.addEventListener('mousemove', (event) => {
-	if (!isMouseDown) return;
+	if (!isCursorLocked && !isMouseDown) return;
 
-	const { x, y } = event;
-	if (mouseX === -1 && mouseY === -1) {
-		mouseX = event.x;
-		mouseY = event.y;
-	} else if (
-		x < marginSize ||
-		x > windowWidth - marginSize ||
-		y < marginSize ||
-		y > windowHeight - marginSize
-	) {
-		mouseX = windowWidth / 2;
-		mouseY = windowHeight / 2;
-	} else {
-		dx = x - mouseX;
-		dy = y - mouseY;
-		mouseX = x;
-		mouseY = y;
-	}
+	dx = event.movementX;
+	dy = event.movementY;
 });
 
 const leftArrowKeys = new Set(['a', 'left']);
@@ -264,6 +259,7 @@ function render() {
 	for (const polygon of transformedPolygons) {
 		if (polygon.vertices.length === 0) continue;
 
+		// eslint-disable-next-line @typescript-eslint/no-loop-func
 		const xPoints: Point[] = polygon.vertices.map((vertex) => {
 			const xPoint = new Point();
 
