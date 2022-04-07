@@ -11,7 +11,7 @@ class Point:
     y: int = 0
     z: int = 0
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # Ensure components are ints
         self.x = int(self.x)
         self.y = int(self.y)

@@ -1,4 +1,5 @@
 import tkinter as tk
+from typing import List, Union
 
 from Matrix import Matrix
 from Point import Point
@@ -29,14 +30,14 @@ polygons = [
     ]),
 ];
 
-angleX = angleY = 0
+angleX = angleY = 0.0
 
 mouseX = mouseY = -1
 
 windowWidth: int
 windowHeight: int
 
-def isInView(p: Point) -> bool:
+def isInView(p: Union[Polygon, Point]) -> bool:
     if isinstance(p, Polygon):
         # true if all four of the polygon's points are in view
         for i in range(len(p.vertices)):
@@ -46,7 +47,7 @@ def isInView(p: Point) -> bool:
     return (p.z >= 0 and abs(p.x) <= windowWidth + 2 * p.z
             and abs(p.y) <= windowHeight + 2 * p.z)
 
-def main():
+def main() -> None:
     global windowWidth, windowHeight
 
     # Create the window
@@ -55,15 +56,6 @@ def main():
     # Set minimum and initial window sizes
     root.minsize(300, 200)
     root.geometry("400x250")
-
-    # Set of reusable drawing parameters
-    # Note: [Python] width is 0 to minimize canvas artifacts left over from
-    # redrawing. https://stackoverflow.com/a/54203448
-    polygon_kwargs = dict(
-        width=0,
-        fill="black",
-        outline="",
-    )
 
     # Create a canvas widget
     canvas = tk.Canvas(root, highlightthickness=0, background="white")
@@ -109,11 +101,11 @@ def main():
     # Handle events
 
     # Left click to "drag" the camera around
-    def on_drag_down(xMotionEvent):
+    def on_drag_down(xMotionEvent: tk.Event[tk.Canvas]) -> None:
         global mouseX, mouseY
         mouseX = xMotionEvent.x
         mouseY = xMotionEvent.y
-    def on_drag_move(xMotionEvent):
+    def on_drag_move(xMotionEvent: tk.Event[tk.Canvas]) -> None:
         global mouseX, mouseY
         nonlocal dx, dy
         dx -= xMotionEvent.x - mouseX  # negative
@@ -124,11 +116,11 @@ def main():
     canvas.bind("<B1-Motion>", on_drag_move)
 
     # Right click to pan around
-    def on_pan_down(xMotionEvent):
+    def on_pan_down(xMotionEvent: tk.Event[tk.Canvas]) -> None:
         global mouseX, mouseY
         mouseX = xMotionEvent.x
         mouseY = xMotionEvent.y
-    def on_pan_move(xMotionEvent):
+    def on_pan_move(xMotionEvent: tk.Event[tk.Canvas]) -> None:
         global mouseX, mouseY
         nonlocal dx, dy
         dx += xMotionEvent.x - mouseX
@@ -138,7 +130,7 @@ def main():
     canvas.bind("<ButtonPress-3>", on_pan_down)
     canvas.bind("<B3-Motion>", on_pan_move)
 
-    def on_resize(xConfEvent):
+    def on_resize(xConfEvent: tk.Event[tk.Misc]) -> None:
         global windowWidth, windowHeight
         # If window is resized, update local window size variables
         if xConfEvent.width != windowWidth:
@@ -147,7 +139,7 @@ def main():
             windowHeight = xConfEvent.height
     root.bind("<Configure>", on_resize)
 
-    def on_key_press(event):
+    def on_key_press(event: tk.Event[tk.Misc]) -> None:
         nonlocal \
             leftArrowKeyIsPressed, \
             rightArrowKeyIsPressed, \
@@ -196,7 +188,7 @@ def main():
             root.destroy()
     root.bind("<KeyPress>", on_key_press)
 
-    def on_key_release(event):
+    def on_key_release(event: tk.Event[tk.Misc]) -> None:
         nonlocal \
             leftArrowKeyIsPressed, \
             rightArrowKeyIsPressed, \
@@ -243,7 +235,7 @@ def main():
     root.bind("<KeyRelease>", on_key_release)
 
     # Game loop
-    def on_update():
+    def on_update() -> None:
         global angleX, angleY
         nonlocal dx, dy
 
@@ -272,7 +264,7 @@ def main():
                 polygons[i] -= Y_VEL/FPS
 
         # Set up polygons to draw
-        transformedPolygons = [None for _ in range(numPolygons)]
+        transformedPolygons: List[Polygon] = [Polygon() for _ in range(numPolygons)]
 
         # Set up rotation angles
         angleX += -dx / MOUSE_SENS_X
@@ -352,7 +344,7 @@ def main():
             if not numVertices:
                 continue
 
-            xPoints = [[None, None] for _ in range(numVertices)]
+            xPoints = [[0.0, 0.0] for _ in range(numVertices)]
             for j in range(numVertices):
                 xPoints[j][0] = transformedPolygons[i].vertices[j].x
                 xPoints[j][1] = transformedPolygons[i].vertices[j].y
@@ -369,7 +361,15 @@ def main():
                 xPoints[j][1] = xPoints[j][1] + windowHeight / 2
 
             # Fill in a polygon connecting each of the points
-            canvas.create_polygon(xPoints, **polygon_kwargs)
+            canvas.create_polygon(
+                *xPoints,
+                # Set of reusable drawing parameters
+                # Note: [Python] width is 0 to minimize canvas artifacts left over from
+                # redrawing. https://stackoverflow.com/a/54203448
+                width=0,
+                fill="black",
+                outline="",
+            )
 
         # Reset rotation variables
         dx = dy = 0
