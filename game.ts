@@ -16,8 +16,6 @@ const MOUSE_SENS_Y = 1500;
 // border margin for warping the pointer
 const marginSize = 1;
 
-// int numPoints = 4;
-let numPolygons = 2;
 const polygons = [
 	new Polygon([
 		new Point(100, 100, 1000),
@@ -76,8 +74,6 @@ for (let x = -1000; x < 1000; x += 200) {
 		])
 	);
 }
-
-numPolygons = polygons.length;
 
 // Key pressed states
 let leftArrowKeyIsPressed = false;
@@ -188,14 +184,16 @@ function render() {
 	angleY += dy / MOUSE_SENS_Y;
 
 	// Rotate the polygons
-	const transformedPolygons: Polygon[] = polygons.map(polygon => {
+	const transformedPolygons: Polygon[] = polygons.map((polygon) => {
 		// Here, Matrix.rotateY() rotates about the y-axis.
 		// Hence, angleX is passed to rotateY() (up-down view rotation).
 		// Similarly, angleY is passed to rotateX() (left-right view rotation)
 		polygon = Matrix.rotateY(polygon, angleX);
 		polygon = Matrix.rotateX(polygon, angleY);
 		return polygon;
-	})
+	});
+
+	console.log(JSON.stringify(transformedPolygons))
 
 	// Clip points to boundary of the viewing frustum
 	for (const [i, polygon] of transformedPolygons.entries()) {
@@ -203,15 +201,18 @@ function render() {
 		// clip the polygon to the viewing frustum
 		if (!isInView(polygon)) {
 			// All vertices of newPoly will be in the viewing frustum
-			let newPoly: Polygon;
+			let newPoly = new Polygon([]);
 
 			// Number of vertices of the current polygon
 			const numVertices = polygon.vertices.length;
 
+			console.log(JSON.stringify(polygon.vertices))
+
 			// Loop over the current polgon's vertices
 			for (const [j, curPoint] of polygon.vertices.entries()) {
-				const nextPoint =
-					polygon.vertices[(j + 1) % numVertices];
+				const nextPoint = polygon.vertices[(j + 1) % numVertices];
+
+				// console.log(curPoint, isInView(curPoint), nextPoint, isInView(nextPoint))
 
 				if (isInView(curPoint)) {
 					newPoly.vertices.push(curPoint);
@@ -221,23 +222,21 @@ function render() {
 				if (isInView(curPoint) ^ isInView(nextPoint)) {
 					let inView: Point, outOfView: Point;
 					if (isInView(curPoint)) {
-						inView = curPoint;
-						outOfView = nextPoint;
+						[inView, outOfView] = [curPoint, nextPoint];
 					} else {
-						inView = nextPoint;
-						outOfView = curPoint;
+						[inView, outOfView] = [nextPoint, curPoint];
 					}
 
 					// Locate the intersection of the line connecting
 					// inView and outView with the boundary of the
 					// viewing frustum
 					while (true) {
-						const midpoint: Point = Point.getMidpoint(inView, outOfView);
-						if (midpoint == inView || midpoint == outOfView) break;
+						const midpoint = Point.getMidpoint(inView, outOfView);
+						if (midpoint.equals(inView) || midpoint.equals(outOfView)) break;
 						else if (isInView(midpoint)) inView = midpoint;
 						else outOfView = midpoint;
 					}
-					const intersectionPoint: Point = inView;
+					const intersectionPoint = inView;
 
 					// Add the intersectionPoint (which is in view) to the new polygon
 					newPoly.vertices.push(intersectionPoint);
@@ -260,23 +259,21 @@ function render() {
 
 	// Project the polygons onto the viewing plane
 	for (const polygon of transformedPolygons) {
-		const xPoints: Point[] = [];
+		if (polygon.vertices.length === 0) continue;
 
-		for (const [i, vertex] of polygon.vertices.entries()) {
-			xPoints[i] = new Point();
+		const xPoints: Point[] = polygon.vertices.map((vertex) => {
+			const xPoint = new Point();
 
 			// Scale the point according to how far away from the viewing plane it is (z coordinate)
-			xPoints[i].x =
-				(vertex.x * windowWidth) /
-				(windowWidth + 2 * vertex.z);
-			xPoints[i].y =
-				(vertex.y * windowHeight) /
-				(windowHeight + 2 * vertex.z);
+			xPoint.x = (vertex.x * windowWidth) / (windowWidth + 2 * vertex.z);
+			xPoint.y = (vertex.y * windowHeight) / (windowHeight + 2 * vertex.z);
 
 			// Translate from game coordinates to screen coordinates
-			xPoints[i].x = xPoints[i].x + windowWidth / 2;
-			xPoints[i].y = xPoints[i].y + windowHeight / 2;
-		}
+			xPoint.x = xPoint.x + windowWidth / 2;
+			xPoint.y = xPoint.y + windowHeight / 2;
+
+			return xPoint;
+		});
 
 		// Fill in a polygon connecting each of the points
 		context.beginPath();
