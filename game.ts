@@ -33,8 +33,8 @@ let angleY = 0;
 let mouseX = -1;
 let mouseY = -1;
 
-const windowWidth = 400;
-const windowHeight = 250;
+let windowWidth = window.innerWidth;
+let windowHeight = window.innerHeight;
 
 function isInView(p: Point | Polygon) {
 	if (p instanceof Point) {
@@ -52,11 +52,18 @@ function isInView(p: Point | Polygon) {
 const canvas = document.createElement('canvas');
 document.body.append(canvas);
 
+function updateWindowWidth() {
+	windowWidth = window.innerWidth;
+	windowHeight = window.innerHeight;
+	canvas.width = windowWidth;
+	canvas.height = windowHeight;
+}
+
+window.addEventListener('resize', updateWindowWidth);
+updateWindowWidth();
+
 const context = canvas.getContext('2d');
 context.lineWidth = 4;
-
-canvas.width = 400;
-canvas.height = 250;
 
 // Draw a blank 1x1 rectangle
 context.fillStyle = 'white';
@@ -116,15 +123,10 @@ window.addEventListener('mousemove', (event) => {
 	}
 });
 
-function quit() {
-	console.log('quitting')
-}
-
 const leftArrowKeys = new Set(['a', 'left']);
 const rightArrowKeys = new Set(['d', 'e', 'right']);
 const upArrowKeys = new Set(['w', 'comma', 'up']);
 const downArrowKeys = new Set(['s', 'o', 'down']);
-const quitKeys = new Set(['q']);
 
 window.addEventListener('keydown', (event) => {
 	const { key } = event;
@@ -134,7 +136,6 @@ window.addEventListener('keydown', (event) => {
 	else if (downArrowKeys.has(key)) downArrowKeyIsPressed = true;
 	else if (['shift'].includes(key)) shiftIsPressed = true;
 	else if (['space'].includes(key)) spaceIsPressed = true;
-	else if (quitKeys.has(key)) quit();
 });
 
 window.addEventListener('keyup', (event) => {
@@ -142,8 +143,7 @@ window.addEventListener('keyup', (event) => {
 	if (leftArrowKeys.has(key)) leftArrowKeyIsPressed = false;
 	if (rightArrowKeys.has(key)) rightArrowKeyIsPressed = false;
 	if (upArrowKeys.has(key)) upArrowKeyIsPressed = false;
-	if (leftArrowKeys.has(key)) leftArrowKeyIsPressed = false;
-	if (rightArrowKeys.has(key)) rightArrowKeyIsPressed = false;
+	if (downArrowKeys.has(key)) downArrowKeyIsPressed = false;
 	else if (['shift'].includes(key)) shiftIsPressed = false;
 	else if (['space'].includes(key)) spaceIsPressed = false;
 });
@@ -214,8 +214,6 @@ function render() {
 			for (const [j, curPoint] of polygon.vertices.entries()) {
 				const nextPoint = polygon.vertices[(j + 1) % numVertices];
 
-				// console.log(curPoint, isInView(curPoint), nextPoint, isInView(nextPoint))
-
 				if (isInView(curPoint)) {
 					newPoly.vertices.push(curPoint);
 				}
@@ -234,7 +232,7 @@ function render() {
 					// Locate the intersection of the line connecting
 					// inView and outView with the boundary of the
 					// viewing frustum
-					while (true) {
+					for (;;) {
 						const midpoint = Point.getMidpoint(inView, outOfView);
 						if (midpoint.equals(inView) || midpoint.equals(outOfView)) break;
 						else if (isInView(midpoint)) inView = midpoint;
@@ -253,9 +251,9 @@ function render() {
 		}
 	}
 
-	for (const [i, polygon] of transformedPolygons.entries()) {
-		for (const [j, p] of polygon.vertices.entries()) {
-			console.log(`Polygon ${i}, Vertex ${j}: (${p.x},${p.y},${p.z})`);
+	for (const [_i, polygon] of transformedPolygons.entries()) {
+		for (const [_j, _p] of polygon.vertices.entries()) {
+			// console.log(`Polygon ${i}, Vertex ${j}: (${p.x},${p.y},${p.z})`);
 		}
 	}
 
@@ -289,6 +287,7 @@ function render() {
 		}
 
 		context.closePath();
+		context.fillStyle = 'black';
 		context.fill();
 	}
 
