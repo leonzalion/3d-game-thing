@@ -1,7 +1,6 @@
 {
+	"extends": "@leonzalion/configs/tsconfig.json",
 	"compilerOptions": {
 		"outDir": "dist",
-		"target": "esnext",
-		"module": "esnext"
 	}
 }
