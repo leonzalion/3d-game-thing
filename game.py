@@ -28,7 +28,7 @@ polygons = [
         Point(300, 300, 1000),
         Point(100, 300, 1000),
     ]),
-];
+]
 
 angleX = angleY = 0.0
 
@@ -90,7 +90,7 @@ def main() -> None:
     downArrowKeyIsPressed = False
     shiftIsPressed = False
     spaceIsPressed = False
-    dx, dy = 0, 0  # change in mouse position
+    dx = dy = 0  # change in mouse position
 
     # Set the types of events we are interested in
     # - StructureNotifyMask: for when the window first appears on screen (MapNotify event)
