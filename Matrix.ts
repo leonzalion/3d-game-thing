@@ -25,6 +25,8 @@ export class Matrix {
 				return new Point(x, y, z);
 			} else if (p instanceof Vector) {
 				return new Vector(x, y, z);
+			} else {
+				throw new TypeError('p is not a Point, Vector, or Polygon');
 			}
 		}
 	}
@@ -51,6 +53,8 @@ export class Matrix {
 				return new Point(x, y, z);
 			} else if (p instanceof Vector) {
 				return new Vector(x, y, z);
+			} else {
+				throw new TypeError('p is not a Point, Vector, or Polygon');
 			}
 		}
 	}

@@ -146,38 +146,40 @@ window.addEventListener('keyup', (event) => {
 // Game loop
 function render() {
 	// Translate each polygon
-	for (const [i, polygon] of polygons.entries()) {
+	for (let [i, polygon] of polygons.entries()) {
 		if (leftArrowKeyIsPressed) {
-			polygons[i] = polygon.add(Matrix.rotateY(X_VEL.divide(FPS), -angleX));
+			polygon = polygon.add(Matrix.rotateY(X_VEL.divide(FPS), -angleX));
 		}
 
 		if (rightArrowKeyIsPressed) {
-			polygons[i] = polygon.subtract(
+			polygon = polygon.subtract(
 				Matrix.rotateY(X_VEL.divide(FPS), -angleX)
 			);
 		}
 
 		if (upArrowKeyIsPressed) {
-			polygons[i] = polygon.subtract(
+			polygon = polygon.subtract(
 				Matrix.rotateX(Matrix.rotateY(Z_VEL.divide(FPS), -angleX), angleY)
 			);
 		}
 
 		if (downArrowKeyIsPressed) {
-			polygons[i] = polygon.add(
+			polygon = polygon.add(
 				Matrix.rotateX(Matrix.rotateY(Z_VEL.divide(FPS), -angleX), angleY)
 			);
 		}
 
 		if (spaceIsPressed) {
 			// Here we add because the positive y-axis is downward
-			polygons[i] = polygon.add(Y_VEL.divide(FPS));
+			polygon = polygon.add(Y_VEL.divide(FPS));
 		}
 
 		if (shiftIsPressed) {
 			// Here we subtract because the positive y-axis is downward
-			polygons[i] = polygon.add(Y_VEL.divide(FPS));
+			polygon = polygon.add(Y_VEL.divide(FPS));
 		}
+
+		polygons[i] = polygon;
 	}
 
 	// Set up rotation angles

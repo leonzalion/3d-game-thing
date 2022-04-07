@@ -1,5 +1,5 @@
-import { Point } from './Point.js';
-import { Vector } from './Vector.js';
+import type { Point } from './Point.js';
+import type { Vector } from './Vector.js';
 
 export class Polygon {
 	vertices: Point[];
