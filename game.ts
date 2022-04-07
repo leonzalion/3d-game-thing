@@ -30,7 +30,7 @@ let angleY = 0;
 let windowWidth = window.innerWidth;
 let windowHeight = window.innerHeight;
 
-function isInView(p: Point | Polygon) {
+function isInView(p: Point | Polygon): boolean {
 	if (p instanceof Point) {
 		return (
 			p.z >= 0 &&
@@ -43,7 +43,7 @@ function isInView(p: Point | Polygon) {
 	}
 }
 
-const canvas = document.querySelector<HTMLCanvasElement>('#canvas');
+const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
 (window as any).lockCursor = () => {
 	canvas.requestPointerLock();
 };
@@ -54,11 +54,11 @@ document.addEventListener('pointerlockchange', () => {
 	if (isCursorLocked) {
 		document.querySelector<HTMLButtonElement>(
 			'#pointerLockButton'
-		).style.display = 'none';
+		)!.style.display = 'none';
 	} else {
 		document.querySelector<HTMLButtonElement>(
 			'#pointerLockButton'
-		).style.display = 'block';
+		)!.style.display = 'block';
 	}
 });
 
@@ -72,7 +72,7 @@ function updateWindowWidth() {
 window.addEventListener('resize', updateWindowWidth);
 updateWindowWidth();
 
-const context = canvas.getContext('2d');
+const context = canvas.getContext('2d')!;
 context.lineWidth = 4;
 
 // Draw a blank 1x1 rectangle
@@ -207,15 +207,14 @@ function render() {
 
 			// Loop over the current polgon's vertices
 			for (const [j, curPoint] of polygon.vertices.entries()) {
-				const nextPoint = polygon.vertices[(j + 1) % numVertices];
+				const nextPoint = polygon.vertices[(j + 1) % numVertices]!;
 
 				if (isInView(curPoint)) {
 					newPoly.vertices.push(curPoint);
 				}
 
 				// If the points lie across the border of the viewing frustum
-				// eslint-disable-next-line no-bitwise
-				if (isInView(curPoint) ^ isInView(nextPoint)) {
+				if (isInView(curPoint) !== isInView(nextPoint)) {
 					let inView: Point;
 					let outOfView: Point;
 					if (isInView(curPoint)) {
@@ -276,7 +275,7 @@ function render() {
 
 		// Fill in a polygon connecting each of the points
 		context.beginPath();
-		context.moveTo(xPoints[0].x, xPoints[0].y);
+		context.moveTo(xPoints[0]!.x, xPoints[0]!.y);
 
 		for (const vertex of xPoints.slice(1)) {
 			context.lineTo(vertex.x, vertex.y);
