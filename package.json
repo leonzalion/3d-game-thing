@@ -2,6 +2,7 @@
 	"type": "module",
 	"scripts": {
 		"prettier": "prettier --write .",
+		"build": "vite build",
 		"dev": "vite"
 	},
 	"devDependencies": {
