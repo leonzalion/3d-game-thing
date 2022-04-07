@@ -11,7 +11,7 @@ export class Point {
 		this.z = z ?? 0;
 	}
 
-	getMidpoint(p: Point, q: Point) {
+	static getMidpoint(p: Point, q: Point) {
 		return new Point(
 			(p.x + q.x) / 2,
 			(p.y + q.y) / 2,
@@ -24,14 +24,18 @@ export class Point {
 	}
 
 	add(vector: Vector) {
-		this.x += vector.x;
-		this.y += vector.y;
-		this.z += vector.z;
+		const p = new Point(this.x, this.y, this.z);
+		p.x += vector.x;
+		p.y += vector.y;
+		p.z += vector.z;
+		return p;
 	}
 
 	subtract(vector: Vector) {
-		this.x -= vector.x;
-		this.y -= vector.y;
-		this.z -= vector.z;
+		const p = new Point(this.x, this.y, this.z);
+		p.x -= vector.x;
+		p.y -= vector.y;
+		p.z -= vector.z;
+		return p;
 	}
 }

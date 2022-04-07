@@ -13,20 +13,32 @@ export class Vector {
 	}
 
 	add({ x, y, z }: Vector) {
-		this.x += x;
-		this.y += y;
-		this.z += z;
+		const v = new Vector(this.x, this.y, this.z);
+
+		v.x += x;
+		v.y += y;
+		v.z += z;
+
+		return v;
 	}
 
 	multiply(scalar: number) {
-		this.x *= scalar;
-		this.y *= scalar;
-		this.z *= scalar;
+		const v = new Vector(this.x, this.y, this.z);
+
+		v.x *= scalar;
+		v.y *= scalar;
+		v.z *= scalar;
+
+		return v;
 	}
 
 	divide(scalar: number) {
-		this.x /= scalar;
-		this.y /= scalar;
-		this.z /= scalar;
+		const v = new Vector(this.x, this.y, this.z);
+
+		v.x /= scalar;
+		v.y /= scalar;
+		v.z /= scalar;
+
+		return v;
 	}
 }

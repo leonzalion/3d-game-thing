@@ -8,14 +8,10 @@ export class Polygon {
 	}
 
 	add(vector: Vector) {
-		for (let i = 0; i < this.vertices.length; i += 1) {
-			this.vertices[i].add(vector);
-		}
+		return new Polygon(this.vertices.map((vertex) => vertex.add(vector)));
 	}
 
 	subtract(vector: Vector) {
-		for (let i = 0; i < this.vertices.length; i += 1) {
-			this.vertices[i].subtract(vector);
-		}
+		return new Polygon(this.vertices.map((vertex) => vertex.subtract(vector)));
 	}
 }
