@@ -118,10 +118,10 @@ window.addEventListener('mousemove', (event) => {
 	dy = event.movementY;
 });
 
-const leftArrowKeys = new Set(['a', 'left']);
-const rightArrowKeys = new Set(['d', 'e', 'right']);
-const upArrowKeys = new Set(['w', 'comma', 'up']);
-const downArrowKeys = new Set(['s', 'o', 'down']);
+const leftArrowKeys = new Set(['a', 'ArrowLeft']);
+const rightArrowKeys = new Set(['d', 'e', 'ArrowRight']);
+const upArrowKeys = new Set(['w', ',', 'ArrowUp']);
+const downArrowKeys = new Set(['s', 'o', 'ArrowDown']);
 
 window.addEventListener('keydown', (event) => {
 	const { key } = event;
@@ -136,9 +136,9 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener('keyup', (event) => {
 	const { key } = event;
 	if (leftArrowKeys.has(key)) leftArrowKeyIsPressed = false;
-	if (rightArrowKeys.has(key)) rightArrowKeyIsPressed = false;
-	if (upArrowKeys.has(key)) upArrowKeyIsPressed = false;
-	if (downArrowKeys.has(key)) downArrowKeyIsPressed = false;
+	else if (rightArrowKeys.has(key)) rightArrowKeyIsPressed = false;
+	else if (upArrowKeys.has(key)) upArrowKeyIsPressed = false;
+	else if (downArrowKeys.has(key)) downArrowKeyIsPressed = false;
 	else if (['shift'].includes(key)) shiftIsPressed = false;
 	else if (['space'].includes(key)) spaceIsPressed = false;
 });
