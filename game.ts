@@ -49,7 +49,6 @@ const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
 };
 
 document.addEventListener('pointerlockchange', () => {
-	console.log('wat')
 	isCursorLocked = document.pointerLockElement === canvas;
 	if (isCursorLocked) {
 		document.querySelector<HTMLButtonElement>(
@@ -152,9 +151,7 @@ function render() {
 		}
 
 		if (rightArrowKeyIsPressed) {
-			polygon = polygon.subtract(
-				Matrix.rotateY(X_VEL.divide(FPS), -angleX)
-			);
+			polygon = polygon.subtract(Matrix.rotateY(X_VEL.divide(FPS), -angleX));
 		}
 
 		if (upArrowKeyIsPressed) {
@@ -176,15 +173,15 @@ function render() {
 
 		if (shiftIsPressed) {
 			// Here we subtract because the positive y-axis is downward
-			polygon = polygon.add(Y_VEL.divide(FPS));
+			polygon = polygon.subtract(Y_VEL.divide(FPS));
 		}
 
 		polygons[i] = polygon;
 	}
 
 	// Set up rotation angles
-	angleX += -dx / MOUSE_SENS_X;
-	angleY += dy / MOUSE_SENS_Y;
+	angleX += dx / MOUSE_SENS_X;
+	angleY += -dy / MOUSE_SENS_Y;
 
 	// Rotate the polygons
 	const transformedPolygons: Polygon[] = polygons.map((polygon) => {
