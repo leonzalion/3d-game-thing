@@ -1,3 +1,5 @@
+/* eslint-disable max-depth */
+/* eslint-disable complexity */
 import { Vector } from './Vector.js';
 import { Polygon } from './Polygon.js';
 import { Point } from './Point.js';
@@ -25,13 +27,14 @@ const polygons = [
 	]),
 ];
 
-let angleX = 0,
-	angleY = 0;
+let angleX = 0;
+let angleY = 0;
 
-let mouseX = -1,
-	mouseY = -1;
+let mouseX = -1;
+let mouseY = -1;
 
-let windowWidth, windowHeight;
+const windowWidth = 400;
+const windowHeight = 250;
 
 function isInView(p: Point | Polygon) {
 	if (p instanceof Point) {
@@ -52,10 +55,6 @@ document.body.append(canvas);
 const context = canvas.getContext('2d');
 context.lineWidth = 4;
 
-// Initialize the game state
-let velX = 0;
-let velY = 0;
-
 canvas.width = 400;
 canvas.height = 250;
 
@@ -67,10 +66,10 @@ context.fillRect(canvas.width, canvas.height, 1, 1);
 for (let x = -1000; x < 1000; x += 200) {
 	polygons.push(
 		new Polygon([
-			new Point(x, 1000, -10000),
-			new Point(x + 50, 1000, -10000),
-			new Point(x + 50, 1000, 10000),
-			new Point(x, 1000, 10000),
+			new Point(x, 1000, -10_000),
+			new Point(x + 50, 1000, -10_000),
+			new Point(x + 50, 1000, 10_000),
+			new Point(x, 1000, 10_000),
 		])
 	);
 }
@@ -83,8 +82,8 @@ let downArrowKeyIsPressed = false;
 let shiftIsPressed = false;
 let spaceIsPressed = false;
 let isMouseDown = false;
-let dx = 0,
-	dy = 0; // change in mouse position
+let dx = 0;
+let dy = 0; // change in mouse position
 
 window.addEventListener('mousedown', () => {
 	isMouseDown = true;
@@ -117,62 +116,69 @@ window.addEventListener('mousemove', (event) => {
 	}
 });
 
-function quit() {}
+function quit() {
+	console.log('quitting')
+}
 
-const leftArrowKeys = ['a', 'left'];
-const rightArrowKeys = ['d', 'e', 'right'];
-const upArrowKeys = ['w', 'comma', 'up'];
-const downArrowKeys = ['s', 'o', 'down'];
-const quitKeys = ['q'];
+const leftArrowKeys = new Set(['a', 'left']);
+const rightArrowKeys = new Set(['d', 'e', 'right']);
+const upArrowKeys = new Set(['w', 'comma', 'up']);
+const downArrowKeys = new Set(['s', 'o', 'down']);
+const quitKeys = new Set(['q']);
 
 window.addEventListener('keydown', (event) => {
 	const { key } = event;
-	if (leftArrowKeys.includes(key)) leftArrowKeyIsPressed = true;
-	else if (rightArrowKeys.includes(key)) rightArrowKeyIsPressed = true;
-	else if (upArrowKeys.includes(key)) upArrowKeyIsPressed = true;
-	else if (downArrowKeys.includes(key)) downArrowKeyIsPressed = true;
+	if (leftArrowKeys.has(key)) leftArrowKeyIsPressed = true;
+	else if (rightArrowKeys.has(key)) rightArrowKeyIsPressed = true;
+	else if (upArrowKeys.has(key)) upArrowKeyIsPressed = true;
+	else if (downArrowKeys.has(key)) downArrowKeyIsPressed = true;
 	else if (['shift'].includes(key)) shiftIsPressed = true;
 	else if (['space'].includes(key)) spaceIsPressed = true;
-	else if (quitKeys.includes(key)) quit();
+	else if (quitKeys.has(key)) quit();
 });
 
 window.addEventListener('keyup', (event) => {
 	const { key } = event;
-	if (leftArrowKeys.includes(key)) leftArrowKeyIsPressed = false;
-	if (rightArrowKeys.includes(key)) rightArrowKeyIsPressed = false;
-	if (upArrowKeys.includes(key)) upArrowKeyIsPressed = false;
-	if (leftArrowKeys.includes(key)) leftArrowKeyIsPressed = false;
-	if (rightArrowKeys.includes(key)) rightArrowKeyIsPressed = false;
+	if (leftArrowKeys.has(key)) leftArrowKeyIsPressed = false;
+	if (rightArrowKeys.has(key)) rightArrowKeyIsPressed = false;
+	if (upArrowKeys.has(key)) upArrowKeyIsPressed = false;
+	if (leftArrowKeys.has(key)) leftArrowKeyIsPressed = false;
+	if (rightArrowKeys.has(key)) rightArrowKeyIsPressed = false;
 	else if (['shift'].includes(key)) shiftIsPressed = false;
 	else if (['space'].includes(key)) spaceIsPressed = false;
 });
 
 // Game loop
 function render() {
-	// Translate each polygons
+	// Translate each polygon
 	for (const [i, polygon] of polygons.entries()) {
 		if (leftArrowKeyIsPressed) {
 			polygons[i] = polygon.add(Matrix.rotateY(X_VEL.divide(FPS), -angleX));
 		}
+
 		if (rightArrowKeyIsPressed) {
 			polygons[i] = polygon.subtract(
 				Matrix.rotateY(X_VEL.divide(FPS), -angleX)
 			);
 		}
+
 		if (upArrowKeyIsPressed) {
 			polygons[i] = polygon.subtract(
 				Matrix.rotateX(Matrix.rotateY(Z_VEL.divide(FPS), -angleX), angleY)
 			);
 		}
+
 		if (downArrowKeyIsPressed) {
 			polygons[i] = polygon.add(
 				Matrix.rotateX(Matrix.rotateY(Z_VEL.divide(FPS), -angleX), angleY)
 			);
 		}
+
 		if (spaceIsPressed) {
 			// Here we add because the positive y-axis is downward
 			polygons[i] = polygon.add(Y_VEL.divide(FPS));
 		}
+
 		if (shiftIsPressed) {
 			// Here we subtract because the positive y-axis is downward
 			polygons[i] = polygon.add(Y_VEL.divide(FPS));
@@ -193,20 +199,16 @@ function render() {
 		return polygon;
 	});
 
-	console.log(JSON.stringify(transformedPolygons))
-
 	// Clip points to boundary of the viewing frustum
 	for (const [i, polygon] of transformedPolygons.entries()) {
 		// If one or more of the vertices are out of view,
 		// clip the polygon to the viewing frustum
 		if (!isInView(polygon)) {
 			// All vertices of newPoly will be in the viewing frustum
-			let newPoly = new Polygon([]);
+			const newPoly = new Polygon([]);
 
 			// Number of vertices of the current polygon
 			const numVertices = polygon.vertices.length;
-
-			console.log(JSON.stringify(polygon.vertices))
 
 			// Loop over the current polgon's vertices
 			for (const [j, curPoint] of polygon.vertices.entries()) {
@@ -219,8 +221,10 @@ function render() {
 				}
 
 				// If the points lie across the border of the viewing frustum
+				// eslint-disable-next-line no-bitwise
 				if (isInView(curPoint) ^ isInView(nextPoint)) {
-					let inView: Point, outOfView: Point;
+					let inView: Point;
+					let outOfView: Point;
 					if (isInView(curPoint)) {
 						[inView, outOfView] = [curPoint, nextPoint];
 					} else {
@@ -236,6 +240,7 @@ function render() {
 						else if (isInView(midpoint)) inView = midpoint;
 						else outOfView = midpoint;
 					}
+
 					const intersectionPoint = inView;
 
 					// Add the intersectionPoint (which is in view) to the new polygon
@@ -269,8 +274,8 @@ function render() {
 			xPoint.y = (vertex.y * windowHeight) / (windowHeight + 2 * vertex.z);
 
 			// Translate from game coordinates to screen coordinates
-			xPoint.x = xPoint.x + windowWidth / 2;
-			xPoint.y = xPoint.y + windowHeight / 2;
+			xPoint.x += windowWidth / 2;
+			xPoint.y += windowHeight / 2;
 
 			return xPoint;
 		});
@@ -282,6 +287,7 @@ function render() {
 		for (const vertex of xPoints.slice(1)) {
 			context.lineTo(vertex.x, vertex.y);
 		}
+
 		context.closePath();
 		context.fill();
 	}
